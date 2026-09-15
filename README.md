@@ -1,5 +1,7 @@
 # Word of the Day
 
+[![word-of-the-day](https://github.com/nbyrd9/word-of-the-day/actions/workflows/word-of-the-day.yml/badge.svg)](https://github.com/nbyrd9/word-of-the-day/actions/workflows/word-of-the-day.yml)
+
 A new vocabulary word every day, picked deterministically from a curated
 212-word bank and published to a small GitHub Pages site by a scheduled
 GitHub Actions workflow. Check it in the morning, or whenever -- the word
