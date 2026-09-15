@@ -1,0 +1,33 @@
+name: word-of-the-day
+
+on:
+  schedule:
+    # Fires every 2 hours. scripts/scheduled_commit.py picks a single random
+    # 2-hour window per day (date-seeded) and only publishes during that
+    # window, after a random 0-85 min sleep -- so the one daily commit
+    # lands at an unpredictable time.
+    - cron: "0 */2 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: word-of-the-day
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pick today's word and push if this is today's window
+        run: python scripts/scheduled_commit.py
