@@ -88,11 +88,17 @@ PAGE_CSS = """
 
 
 def render_index(entry: dict, total: int) -> str:
+    description = f"{entry['word']} ({entry['pos']}): {entry['definition']}"
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Word of the Day &mdash; {html.escape(entry['word'])}</title>
+<meta name="description" content="{html.escape(description)}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Word of the Day: {html.escape(entry['word'])}">
+<meta property="og:description" content="{html.escape(description)}">
+<meta name="twitter:card" content="summary">
 <style>{PAGE_CSS}</style>
 </head>
 <body>
@@ -114,7 +120,7 @@ def render_index(entry: dict, total: int) -> str:
 """
 
 
-def render_archive(archive: list[dict]) -> str:
+def render_archive(archive: list[dict], bank_size: int) -> str:
     rows = "\n".join(
         f"<tr><td>{html.escape(e['date'])}</td><td><strong>{html.escape(e['word'])}</strong></td>"
         f"<td>{html.escape(e['pos'])}</td><td>{html.escape(e['definition'])}</td></tr>"
@@ -132,6 +138,7 @@ def render_archive(archive: list[dict]) -> str:
   <div class="eyebrow">Word of the Day</div>
   <h1 class="word" style="font-size:1.8rem;">Archive</h1>
   <p class="pos"><a href="./index.html">&larr; back to today's word</a></p>
+  <p class="pos">{len(archive)} word{'' if len(archive) == 1 else 's'} published so far &middot; {bank_size} in rotation</p>
   <div class="card">
     <table>
       <thead><tr><th>Date</th><th>Word</th><th>Part of speech</th><th>Definition</th></tr></thead>
@@ -163,7 +170,7 @@ def main() -> int:
 
     DOCS.mkdir(exist_ok=True)
     (DOCS / "index.html").write_text(render_index(entry, len(archive)), encoding="utf-8")
-    (DOCS / "archive.html").write_text(render_archive(archive), encoding="utf-8")
+    (DOCS / "archive.html").write_text(render_archive(archive, len(WORD_BANK)), encoding="utf-8")
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
 
     return 0
